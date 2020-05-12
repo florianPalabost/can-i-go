@@ -1,0 +1,17 @@
+<div id="search-component" style="position: relative">
+  <div class="row mt-5">
+    <div class="col-12 col-md-4 mx-auto">
+      <div class="form-group">
+        <label for="ser-input">{{'search.label_depart' | translate}}</label><input type="text" (input)="retrieveRequestAddress($event.target.value)"
+                                              class="form-control rounded-0 bg-light ser-input" id="ser-input" style="border: none" placeholder="{{'search.placeholder_depart' | translate}}" novalidate>
+      </div>
+      <p *ngIf="addresses.length > 0"> {{'search.msg_choose_list' | translate}}</p>
+      <ngx-select-dropdown *ngIf="addresses.length > 0" (change)="handleSelectedAdress($event.value)"
+                           [multiple]="false" [(ngModel)]="addressSelected" [options]="addresses"
+                           [config]="config" >
+      </ngx-select-dropdown>
+
+    </div>
+  </div>
+  <app-map *ngIf="addressSelectedCoord && addressSelectedCoord.length > 0" [address]="addressSelectedCoord"></app-map>
+</div>

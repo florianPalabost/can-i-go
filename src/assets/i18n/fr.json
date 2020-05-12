@@ -1,0 +1,14 @@
+{
+  "default": {
+    "language": "Langue"
+  },
+  "search": {
+    "label_depart": "Saisir point de départ",
+    "placeholder_depart": "Saisir adresse, ville,...",
+    "msg_choose_list": "Choisir dans la liste"
+  },
+  "map": {
+    "label_destination": "Saisir destination",
+    "placeholder_dest": "Saisir nouvelle destination ..."
+  }
+}

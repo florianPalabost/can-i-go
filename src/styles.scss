@@ -1,1 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';
+@import "~leaflet/dist/leaflet.css";
+
+.map-wrapper {
+  margin-top: 5%;
+  position: relative;
+  height: 100vw;
+  width: auto;
+}
+
+.map-border {
+  border: 2px solid orange;
+  height: 100%;
+}
+
+#map {
+  position: relative;
+  height: inherit;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+

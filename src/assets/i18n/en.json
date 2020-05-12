@@ -1,0 +1,14 @@
+{
+  "default": {
+    "language": "Language"
+  },
+  "search": {
+    "label_depart": "Type departure",
+    "placeholder_depart": "Type address, city,...",
+    "msg_choose_list": "Choose in the list"
+  },
+  "map": {
+    "label_destination": "New destination",
+    "placeholder_dest": "Type to find new place..."
+  }
+}
