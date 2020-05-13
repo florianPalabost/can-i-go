@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import * as leaflet from 'leaflet';
 import {HttpClient} from '@angular/common/http';
 
@@ -7,7 +7,7 @@ import {HttpClient} from '@angular/common/http';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements AfterViewInit {
+export class MapComponent implements AfterViewInit, OnChanges {
 
   config = {
     displayKey: 'label',
@@ -60,14 +60,14 @@ export class MapComponent implements AfterViewInit {
       lat: this.address[1],
       lng: this.address[0],
     };
-    const zoom = 8;
+    const zoom = 7;
     this.map = leaflet.map('map', {
       center: [loc.lat, loc.lng],
       zoom
     });
 
     const layer = leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      minZoom: 7,
+      minZoom: 6,
       maxZoom: 17,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     });
@@ -76,8 +76,10 @@ export class MapComponent implements AfterViewInit {
     if (this.address[0] && this.address[1]) {
       this.addMarker(loc);
       this.addCircle(loc);
+      this.map.flyTo([this.address[1], this.address[0]], 8);
     }
   }
+
   addMarker(coords) {
     const marker = leaflet.marker([coords.lat, coords.lng], {icon: this.smallIcon});
     marker.addTo(this.map);
@@ -112,6 +114,15 @@ export class MapComponent implements AfterViewInit {
   addPointMarker(coords) {
     const marker = leaflet.marker([coords[1], coords[0]], {icon: this.smallIconNewLocation});
     marker.addTo(this.map);
-  // console.log('add: ', coords);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.address = changes.address.currentValue;
+    if (this.map !== undefined){
+      this.map.off();
+      this.map = this.map.remove();
+      this.createMap();
+    }
+
   }
 }

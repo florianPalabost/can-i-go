@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {TranslateService} from '@ngx-translate/core';
+import { faSearchLocation } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-search',
@@ -9,11 +10,12 @@ import {TranslateService} from '@ngx-translate/core';
   styleUrls: ['./search.component.scss']
 })
 export class SearchComponent implements OnInit {
+  faSearchLocation = faSearchLocation;
   addressForm: FormGroup;
   showDropDown = false;
   addresses: any = [];
   addressSelected: [];
-  addressSelectedCoord: [];
+  addressSelectedCoord: [string, string];
 
   config = {
     displayKey: 'label',
@@ -69,4 +71,16 @@ export class SearchComponent implements OnInit {
     this.addressSelectedCoord = coordinates;
   }
 
+  getUserLocation() {
+    console.log('user location');
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const longitude = position.coords.longitude;
+        const latitude = position.coords.latitude;
+        this.addressSelectedCoord = [longitude.toString(), latitude.toString()];
+      });
+    } else {
+      alert('Geolocation is not supported by this browser.');
+    }
+  }
 }
