@@ -12,13 +12,16 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import { NavComponent } from './nav/nav.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { AlertComponent } from './alert/alert.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapComponent,
     SearchComponent,
-    NavComponent
+    NavComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule,
@@ -27,6 +30,7 @@ import { NavComponent } from './nav/nav.component';
     HttpClientModule,
     SelectDropDownModule,
     FormsModule,
+    FontAwesomeModule,
     NgbModule,
     TranslateModule.forRoot({
       loader: {

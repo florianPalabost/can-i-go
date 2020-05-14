@@ -1,13 +1,16 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import * as leaflet from 'leaflet';
+import * as geometry from 'leaflet-geometryutil';
+import * as turf from '@turf/turf';
 import {HttpClient} from '@angular/common/http';
+import {AlertService} from '../services/alert.service';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements AfterViewInit {
+export class MapComponent implements AfterViewInit, OnChanges {
 
   config = {
     displayKey: 'label',
@@ -49,7 +52,7 @@ export class MapComponent implements AfterViewInit {
   addressesNewLocation: [];
   addressNewLocationSelected: [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private alertService: AlertService) { }
 
   ngAfterViewInit(): void {
     this.createMap();
@@ -60,14 +63,14 @@ export class MapComponent implements AfterViewInit {
       lat: this.address[1],
       lng: this.address[0],
     };
-    const zoom = 8;
+    const zoom = 7;
     this.map = leaflet.map('map', {
       center: [loc.lat, loc.lng],
       zoom
     });
 
     const layer = leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      minZoom: 7,
+      minZoom: 6,
       maxZoom: 17,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     });
@@ -76,8 +79,10 @@ export class MapComponent implements AfterViewInit {
     if (this.address[0] && this.address[1]) {
       this.addMarker(loc);
       this.addCircle(loc);
+      this.map.flyTo([this.address[1], this.address[0]], 8);
     }
   }
+
   addMarker(coords) {
     const marker = leaflet.marker([coords.lat, coords.lng], {icon: this.smallIcon});
     marker.addTo(this.map);
@@ -112,6 +117,36 @@ export class MapComponent implements AfterViewInit {
   addPointMarker(coords) {
     const marker = leaflet.marker([coords[1], coords[0]], {icon: this.smallIconNewLocation});
     marker.addTo(this.map);
-  // console.log('add: ', coords);
+
+    // draw line between center & new marker
+    const line = leaflet.polyline([[this.address[1], this.address[0]], [coords[1], coords[0]]], {
+      color: 'green'
+    });
+    // calc distance between center of circle and the destination
+    const distanceKM = Math.round(
+      turf.distance( [Number(this.address[1]), Number(this.address[0])],  [Number(coords[1]), Number(coords[0])]));
+
+    const distanceOiseau = Math.round(
+        leaflet.latLng([this.address[1], this.address[0]]).distanceTo([coords[1], coords[0]]) / 1000);
+
+    line.bindPopup(`Entre ces 2 points il y a ${distanceKM} km réel et ${distanceOiseau} km à voi d'oiseau`);
+    line.addTo(this.map);
+
+    this.alertService.clear();
+    distanceOiseau <= 100 ?
+        this.alertService.success('Vous pouvez vous déplacer vers ce lieu', true) :
+          this.alertService.error('Vous ne pouvez PAS vous déplacer vers ce lieu !');
+
+
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.address = changes.address.currentValue;
+    if (this.map !== undefined){
+      this.map.off();
+      this.map = this.map.remove();
+      this.createMap();
+    }
+
   }
 }
