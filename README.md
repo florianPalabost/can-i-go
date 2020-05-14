@@ -14,5 +14,6 @@ npm serve -o
 ````
 
 ## Todo
-- Use user location for start point
-- transform in PWA
+- ~~Use user location for start point~~
+- ~~transform in PWA~~
+- clean code
