@@ -1,6 +1,9 @@
 import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import * as leaflet from 'leaflet';
+import * as geometry from 'leaflet-geometryutil';
+import * as turf from '@turf/turf';
 import {HttpClient} from '@angular/common/http';
+import {AlertService} from '../services/alert.service';
 
 @Component({
   selector: 'app-map',
@@ -49,7 +52,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
   addressesNewLocation: [];
   addressNewLocationSelected: [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private alertService: AlertService) { }
 
   ngAfterViewInit(): void {
     this.createMap();
@@ -114,6 +117,27 @@ export class MapComponent implements AfterViewInit, OnChanges {
   addPointMarker(coords) {
     const marker = leaflet.marker([coords[1], coords[0]], {icon: this.smallIconNewLocation});
     marker.addTo(this.map);
+
+    // draw line between center & new marker
+    const line = leaflet.polyline([[this.address[1], this.address[0]], [coords[1], coords[0]]], {
+      color: 'green'
+    });
+    // calc distance between center of circle and the destination
+    const distanceKM = Math.round(
+      turf.distance( [Number(this.address[1]), Number(this.address[0])],  [Number(coords[1]), Number(coords[0])]));
+
+    const distanceOiseau = Math.round(
+        leaflet.latLng([this.address[1], this.address[0]]).distanceTo([coords[1], coords[0]]) / 1000);
+
+    line.bindPopup(`Entre ces 2 points il y a ${distanceKM} km réel et ${distanceOiseau} km à voi d'oiseau`);
+    line.addTo(this.map);
+
+    this.alertService.clear();
+    distanceOiseau <= 100 ?
+        this.alertService.success('Vous pouvez vous déplacer vers ce lieu', true) :
+          this.alertService.error('Vous ne pouvez PAS vous déplacer vers ce lieu !');
+
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {

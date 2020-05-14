@@ -72,7 +72,6 @@ export class SearchComponent implements OnInit {
   }
 
   getUserLocation() {
-    console.log('user location');
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const longitude = position.coords.longitude;
