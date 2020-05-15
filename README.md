@@ -10,7 +10,7 @@ npm i
 
 ## Run 
 ````
-npm serve -o
+npm start
 ````
 
 ## Todo
