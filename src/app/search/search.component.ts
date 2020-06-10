@@ -26,7 +26,7 @@ export class SearchComponent implements OnInit {
     noResultsFound: 'No results found!',
     searchPlaceholder: 'Search',
     searchOnKey: 'properties.label',
-    clearOnSelection: false ,
+    clearOnSelection: false,
     inputDirection: 'ltr'
   };
   langs = ['en', 'fr'];
@@ -49,12 +49,11 @@ export class SearchComponent implements OnInit {
 
   async retrieveRequestAddress(q) {
     if (q.length > 3) {
-
       await this.http.get('https://api-adresse.data.gouv.fr/search/?q=' + q).subscribe((data: any) => {
 
       this.addresses = data.features;
       this.addresses.forEach(add => {
-        add.label = add.properties.label;
+        add.label = add?.properties?.label;
       });
       this.showDropDown = !this.showDropDown;
       });
@@ -67,15 +66,14 @@ export class SearchComponent implements OnInit {
   }
 
   handleSelectedAdress = (addressObj) => {
-    const coordinates = addressObj.geometry.coordinates;
-    this.addressSelectedCoord = coordinates;
+    this.addressSelectedCoord = addressObj?.geometry?.coordinates;
   }
 
   getUserLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
-        const longitude = position.coords.longitude;
-        const latitude = position.coords.latitude;
+        const longitude = position?.coords?.longitude;
+        const latitude = position?.coords?.latitude;
         this.addressSelectedCoord = [longitude.toString(), latitude.toString()];
       });
     } else {

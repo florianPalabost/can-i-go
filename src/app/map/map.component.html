@@ -1,8 +1,10 @@
  <div class="row w-100 h-100" style="display: block"  >
    <div class="col-12">
      <div class="map-wrapper ">
-       <label for="ser-input">{{'map.label_destination' | translate}}</label><input type="text" (input)="retrieveNewLocation($event.target.value)"
-                                             class="form-control rounded-0 bg-light ser-input" id="ser-input" style="border: none" placeholder="{{'map.placeholder_dest'| translate}}" novalidate>
+       <label for="ser-input">{{'map.label_destination' | translate}}</label>
+       <input type="text" (input)="retrieveNewLocation($event.target.value)"
+             class="form-control rounded-0 bg-light ser-input" id="ser-input"
+             style="border: none" placeholder="{{'map.placeholder_dest'| translate}}" novalidate>
        <p *ngIf="addressesNewLocation && addressesNewLocation.length > 0">{{'search.msg_choose_list' | translate}}</p>
        <ngx-select-dropdown *ngIf="addressesNewLocation && addressesNewLocation.length > 0" (change)="handleSelectedAdress($event.value)"
                             [multiple]="false" [(ngModel)]="addressNewLocationSelected" [options]="addressesNewLocation"

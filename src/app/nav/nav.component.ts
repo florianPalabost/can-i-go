@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 
 @Component({
@@ -6,15 +6,12 @@ import {TranslateService} from '@ngx-translate/core';
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
 })
-export class NavComponent implements OnInit {
+export class NavComponent {
 
   constructor(public translate: TranslateService) {
     translate.addLangs(['fr', 'en']);
     translate.setDefaultLang('fr');
     translate.use('fr');
-  }
-
-  ngOnInit(): void {
   }
 
   useLanguage(language: string) {

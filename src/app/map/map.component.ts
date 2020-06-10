@@ -26,26 +26,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
   };
   map;
   showDropDown = false;
-
-  smallIcon = new leaflet.Icon({
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-icon.png',
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-icon-2x.png',
-    iconSize:    [25, 41],
-    iconAnchor:  [12, 41],
-    popupAnchor: [1, -34],
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    shadowSize:  [41, 41]
-  });
-  smallIconNewLocation = new leaflet.Icon({
-    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-icon-2x.png',
-    iconSize:    [25, 41],
-    iconAnchor:  [12, 41],
-    popupAnchor: [1, -34],
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    shadowSize:  [41, 41]
-  });
-
+  smallIcon = this.createMarker('https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-icon.png');
+  smallIconNewLocation = this.createMarker('https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png');
 
   @Input() address: Array<any>;
 
@@ -63,6 +45,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
       lat: this.address[1],
       lng: this.address[0],
     };
+
     const zoom = 7;
     this.map = leaflet.map('map', {
       center: [loc.lat, loc.lng],
@@ -81,6 +64,18 @@ export class MapComponent implements AfterViewInit, OnChanges {
       this.addCircle(loc);
       this.map.flyTo([this.address[1], this.address[0]], 8);
     }
+  }
+
+  createMarker(urlMarker = '') {
+    return new leaflet.Icon({
+      iconUrl: urlMarker,
+      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-icon-2x.png',
+      iconSize:    [25, 41],
+      iconAnchor:  [12, 41],
+      popupAnchor: [1, -34],
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      shadowSize:  [41, 41]
+    });
   }
 
   addMarker(coords) {
@@ -136,7 +131,6 @@ export class MapComponent implements AfterViewInit, OnChanges {
     distanceOiseau <= 100 ?
         this.alertService.success('Vous pouvez vous déplacer vers ce lieu', true) :
           this.alertService.error('Vous ne pouvez PAS vous déplacer vers ce lieu !');
-
 
   }
 
