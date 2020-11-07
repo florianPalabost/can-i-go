@@ -4,6 +4,7 @@
   },
   "search": {
     "label_depart": "Saisir point de départ",
+    "label_radius": "Saisir rayon autorisé en km, (défaut 100 km)",
     "placeholder_depart": "Saisir adresse, ville,...",
     "msg_choose_list": "Choisir dans la liste"
   },

@@ -5,13 +5,16 @@ import * as turf from '@turf/turf';
 import {HttpClient} from '@angular/common/http';
 import {AlertService} from '../services/alert.service';
 
+const CDN_LEAFLET = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/';
+const API_ADDRESS = 'https://api-adresse.data.gouv.fr/search/?q=';
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements AfterViewInit, OnChanges {
 
+export class MapComponent implements AfterViewInit, OnChanges {
   config = {
     displayKey: 'label',
     search: true,
@@ -26,10 +29,11 @@ export class MapComponent implements AfterViewInit, OnChanges {
   };
   map;
   showDropDown = false;
-  smallIcon = this.createMarker('https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-icon.png');
+  smallIcon = this.createMarker(CDN_LEAFLET + 'marker-icon.png');
   smallIconNewLocation = this.createMarker('https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png');
 
   @Input() address: Array<any>;
+  @Input() userRadius: number;
 
   addressesNewLocation: [];
   addressNewLocationSelected: [];
@@ -61,7 +65,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
     layer.addTo(this.map);
     if (this.address[0] && this.address[1]) {
       this.addMarker(loc);
-      this.addCircle(loc);
+      this.addCircle(loc, this.userRadius);
       this.map.flyTo([this.address[1], this.address[0]], 8);
     }
   }
@@ -69,11 +73,11 @@ export class MapComponent implements AfterViewInit, OnChanges {
   createMarker(urlMarker = '') {
     return new leaflet.Icon({
       iconUrl: urlMarker,
-      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-icon-2x.png',
+      iconRetinaUrl: CDN_LEAFLET + 'marker-icon-2x.png',
       iconSize:    [25, 41],
       iconAnchor:  [12, 41],
       popupAnchor: [1, -34],
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      shadowUrl: CDN_LEAFLET + 'marker-shadow.png',
       shadowSize:  [41, 41]
     });
   }
@@ -83,8 +87,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
     marker.addTo(this.map);
   }
 
-  addCircle(coords) {
-    const marker = leaflet.circle([coords.lat, coords.lng], 100000 , {
+  addCircle(coords, userDistance) {
+    const marker = leaflet.circle([coords.lat, coords.lng], userDistance * 1000 , {
       color: 'red',
       fillColor: '#f03',
     });
@@ -93,7 +97,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
 
   async retrieveNewLocation(q) {
     if (q.length > 3) {
-      await this.http.get('https://api-adresse.data.gouv.fr/search/?q=' + q).subscribe((data: any) => {
+      await this.http.get(API_ADDRESS + q).subscribe((data: any) => {
         this.addressesNewLocation = data.features;
         this.addressesNewLocation.forEach((add: any) => {
           add.label = add.properties.label;
@@ -124,18 +128,24 @@ export class MapComponent implements AfterViewInit, OnChanges {
     const distanceOiseau = Math.round(
         leaflet.latLng([this.address[1], this.address[0]]).distanceTo([coords[1], coords[0]]) / 1000);
 
-    line.bindPopup(`Entre ces 2 points il y a ${distanceKM} km réel et ${distanceOiseau} km à voi d'oiseau`);
+    line.bindPopup(`Entre ces 2 points il y a ${distanceKM} km réel et ${distanceOiseau} km à vol d'oiseau`);
     line.addTo(this.map);
 
     this.alertService.clear();
-    distanceOiseau <= 100 ?
+    distanceOiseau <= this.userRadius ?
         this.alertService.success('Vous pouvez vous déplacer vers ce lieu', true) :
           this.alertService.error('Vous ne pouvez PAS vous déplacer vers ce lieu !');
 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.address = changes.address.currentValue;
+    if (changes.userRadius) {
+      this.userRadius = changes.userRadius.currentValue;
+    }
+    else if (changes.address){
+      this.address = changes.address.currentValue;
+    }
+
     if (this.map !== undefined){
       this.map.off();
       this.map = this.map.remove();

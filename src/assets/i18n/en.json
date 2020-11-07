@@ -4,6 +4,7 @@
   },
   "search": {
     "label_depart": "Type departure",
+    "label_radius": "Type autorized radius in km, (default 100 km)",
     "placeholder_depart": "Type address, city,...",
     "msg_choose_list": "Choose in the list"
   },

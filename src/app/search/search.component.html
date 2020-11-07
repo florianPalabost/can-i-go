@@ -1,11 +1,12 @@
 <div id="search-component" style="position: relative">
   <div class="row mt-5">
+
     <div class="col-12 col-md-4 mx-auto">
       <div class="form-inline">
         <label for="ser-input" class="col-12">{{'search.label_depart' | translate}}</label>
-        <input type="text" (input)="retrieveRequestAddress($event.target.value)"
+        <input type="text" (input)="retrieveRequestAddress($event?.target?.value)"
              class="form-control rounded-0 bg-light ser-input mt-2 col-9" id="ser-input"
-               style="border: none" placeholder="{{'search.placeholder_depart' | translate}}" novalidate>
+               style="border: none" [placeholder]="'search.placeholder_depart' | translate" novalidate>
         <fa-icon [icon]="faSearchLocation" (click)="getUserLocation()" style="cursor: pointer" size="lg" class="ml-2 mt-2 col-1"></fa-icon>
       </div>
       <p *ngIf="addresses.length > 0"> {{'search.msg_choose_list' | translate}}</p>
@@ -13,9 +14,13 @@
                            [multiple]="false" [(ngModel)]="addressSelected" [options]="addresses"
                            [config]="config" >
       </ngx-select-dropdown>
+      <div class="mt-5 d-inline-flex w-100">
+        <input type="number" class="form-control" (change)="handleRadius($event?.target?.value)" [placeholder]="'search.label_radius' | translate" [min]="1" [max]="1000" />
+        <span class="col-form-label ml-1">km</span>
+      </div>
 
     </div>
 
   </div>
-  <app-map *ngIf="addressSelectedCoord && addressSelectedCoord.length > 0" [address]="addressSelectedCoord"></app-map>
+  <app-map *ngIf="addressSelectedCoord && addressSelectedCoord.length > 0" [address]="addressSelectedCoord" [userRadius]="radiusUser"></app-map>
 </div>

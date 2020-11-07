@@ -16,6 +16,7 @@ export class SearchComponent implements OnInit {
   addresses: any = [];
   addressSelected: [];
   addressSelectedCoord: [string, string];
+  radiusUser = 100;
 
   config = {
     displayKey: 'label',
@@ -44,6 +45,7 @@ export class SearchComponent implements OnInit {
   ngOnInit(): void {
     this.addressForm = this.formBuilder.group({
       address: ['', Validators.required],
+      radius: [100, [Validators.required, Validators.max(1000), Validators.min(1)]]
     });
   }
 
@@ -61,10 +63,6 @@ export class SearchComponent implements OnInit {
     }
   }
 
-  hideDropDown = (event) => {
-    this.showDropDown = false;
-  }
-
   handleSelectedAdress = (addressObj) => {
     this.addressSelectedCoord = addressObj?.geometry?.coordinates;
   }
@@ -79,5 +77,9 @@ export class SearchComponent implements OnInit {
     } else {
       alert('Geolocation is not supported by this browser.');
     }
+  }
+
+  handleRadius(value: number) {
+    this.radiusUser = value;
   }
 }
